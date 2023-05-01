@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let images = [];
+        let displayedImages = [];
+        let animationStopped = false;
+
+        function preload() {
+            for (let i = 1; i <= 86; i++) {
+                images.push(loadImage(`image${i}.jpg`));
+            }
+        }
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            frameRate(2);
+        }
+
+       function draw() {
+    background(255);
+
+    if (!animationStopped) {
+        let imgIndex = frameCount % images.length;
+        let img = images[imgIndex];
+
+        let maxDimension = Math.max(img.width, img.height);
+        let targetSize = random(width / 8, width / 5);
+        let scale = targetSize / maxDimension;
+
+        let imgWidth = img.width * scale;
+        let imgHeight = img.height * scale;
+        let x = random(width - imgWidth);
+        let y = random(height - imgHeight);
+
+        displayedImages.push({ img: img, x: x, y: y, width: imgWidth, height: imgHeight });
+
+        if (frameCount >= images.length - 1) {
+            animationStopped = true;
+        }
+    }
+
+    for (let displayedImage of displayedImages) {
+        image(displayedImage.img, displayedImage.x, displayedImage.y, displayedImage.width, displayedImage.height);
+    }
+}
+
+        function mousePressed() {
+            if (animationStopped) {
+                let imageToRemove = -1;
+                for (let i = displayedImages.length - 1; i >= 0; i--) {
+                    let img = displayedImages[i];
+                    if (mouseX >= img.x && mouseX <= img.x + img.width &&
+                        mouseY >= img.y && mouseY <= img.y + img.height) {
+                        imageToRemove = i;
+                        break;
+                    }
+                }
+
+                if (imageToRemove !== -1) {
+                    displayedImages.splice(imageToRemove, 1);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
